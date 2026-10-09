@@ -67,12 +67,44 @@ const vec3 luma_coeff = vec3(0.2126, 0.7152, 0.0722);
 float dot_weight(vec2 f, vec2 o, float bloom) {
     return exp(-4.0 * length(f - (o + vec2(0.5))) * bloom);
 }
+// the sharp shimmerless box filter: a destination pixel is a rectangle covering
+// part of the source picture, not a point sample of it, so blend by covered area
+vec3 box_texel(vec2 at, vec2 origin) {
+    return texture2D(u_game, (origin + at + vec2(0.5)) / u_src).rgb;
+}
+vec3 box_sample(vec2 dest, vec2 shown, vec2 frag) {
+    vec2 per_source = dest / shown;
+    vec2 per_dest = shown / dest;
+    vec2 tl = floor(frag);
+    vec2 front = floor(per_dest * tl);
+    vec2 back = floor(per_dest * (tl + 1.0));
+    vec2 shift = (vec2(1.0) - step(back, front)) * (per_source * back - tl);
+    vec2 centre = back - shift;
+    vec2 lo = floor(centre);
+    vec2 blend = centre - lo;
+    vec2 first = clamp(lo, vec2(0.0), shown - vec2(1.0));
+    vec2 next = clamp(lo + vec2(1.0), vec2(0.0), shown - vec2(1.0));
+    vec2 origin = u_uv.xy * u_src;
+    vec3 above = mix(
+        box_texel(vec2(first.x, first.y), origin),
+        box_texel(vec2(next.x, first.y), origin),
+        blend.x
+    );
+    vec3 below = mix(
+        box_texel(vec2(first.x, next.y), origin),
+        box_texel(vec2(next.x, next.y), origin),
+        blend.x
+    );
+    return mix(above, below, blend.y);
+}
 void main() {
     vec2 uv = u_uv.xy + v_uv * u_uv.zw;
     vec2 f = fract(uv * u_src);
     vec3 c = texture2D(u_game, uv).rgb;
     bool inside = all(greaterThanEqual(uv, u_pic.xy)) && all(lessThan(uv, u_pic.zw));
     if (!inside) {
+    } else if (u_mode > 4.5) {
+        c = box_sample(u_rect.zw, u_uv.zw * u_src, v_uv * u_rect.zw);
     } else if (u_mode > 3.5) {
         c = pow(c, vec3(1.05));
         vec2 d = abs(f - 0.5);

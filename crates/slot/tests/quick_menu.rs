@@ -271,7 +271,7 @@ fn each_platform_keeps_its_own_shader_wraps_and_starts_on_grid_and_simpletex() {
     );
     for (btn, want, shown) in [
         (Btn::Right, Shader::Dot, QuickValue::Dot),
-        (Btn::Right, Shader::Off, QuickValue::Off),
+        (Btn::Right, Shader::Sharp, QuickValue::Sharp),
         (Btn::Left, Shader::Dot, QuickValue::Dot),
         (Btn::Left, Shader::Grid, QuickValue::Grid),
         (Btn::Left, Shader::Lcd3x, QuickValue::Lcd3x),
@@ -288,7 +288,7 @@ fn each_platform_keeps_its_own_shader_wraps_and_starts_on_grid_and_simpletex() {
     assert_eq!(read_slot_state(d.path()).shader_gb, Shader::Simpletex);
     press(&mut a, Btn::Down);
     press(&mut a, Btn::Left);
-    assert_eq!(read_slot_state(d.path()).shader_gb, Shader::Grid);
+    assert_eq!(read_slot_state(d.path()).shader_gb, Shader::Sharp);
     assert_eq!(read_slot_state(d.path()).shader_gba, Shader::Off);
 }
 

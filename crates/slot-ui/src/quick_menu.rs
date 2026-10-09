@@ -152,10 +152,11 @@ pub enum QuickValue {
     Grid,
     Dot,
     Simpletex,
+    Sharp,
 }
 
 impl QuickValue {
-    pub const ALL: [QuickValue; 10] = [
+    pub const ALL: [QuickValue; 11] = [
         QuickValue::Speed2,
         QuickValue::Speed3,
         QuickValue::Speed4,
@@ -166,6 +167,7 @@ impl QuickValue {
         QuickValue::Grid,
         QuickValue::Dot,
         QuickValue::Simpletex,
+        QuickValue::Sharp,
     ];
 
     pub fn index(self) -> usize {
@@ -184,6 +186,7 @@ impl QuickValue {
             QuickValue::Grid => "Grid",
             QuickValue::Dot => "Dot",
             QuickValue::Simpletex => "Simpletex",
+            QuickValue::Sharp => "Sharp",
         }
     }
 

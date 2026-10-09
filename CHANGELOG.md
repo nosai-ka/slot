@@ -5,7 +5,8 @@
 - Rumble regression fixed.
 - The boot logo is built to the size of the one BaseOS installed, so it fits every panel instead of only 720x480.
 - Runs on the RG35XXSP: the picture fills the 4:3 screen's width and a GBA SP bezel sits underneath while a game plays.
-- Screen shaders chosen per platform: Off, LCD3x, Grid or Dot for GBA, and Off, Grid or Simpletex for Game Boy and Game Boy Color.
+- Screen shaders chosen per platform: Off, LCD3x, Grid, Dot or Sharp for GBA, and Off, Grid, Simpletex or Sharp for Game Boy and Game Boy Color. Sharp is the sharp shimmerless box filter: it treats a pixel as a rectangle covering part of the picture instead of a point sample, so scrolling does not crawl on panels that cannot show every source pixel whole.
+- A panel smaller than 720x480 no longer drops rows and columns of pixels: the blit to the panel interpolates while it has to shrink, and stays pixel exact when it does not.
 - SELECT + B / A in game steps back and forth through the screen shaders. A game's own soft reset that holds SELECT with A or B no longer reaches it; hold A on the carousel to start a game fresh instead.
 - New settings: auto save on eject, turbo buttons and rewind can each be switched off.
 - Settings are grouped into Screen and Gameplay pages, and every value wraps from the last choice to the first.

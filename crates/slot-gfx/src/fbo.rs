@@ -26,6 +26,9 @@ pub struct Compositor {
     u_bezel_gain: gl::types::GLint,
     u_bezel_alpha: gl::types::GLint,
     bezel: Option<gl::types::GLuint>,
+    // a panel smaller than the framebuffer drops whole rows and columns of pixels
+    // if the blit point samples it, so the blit interpolates and only while shrinking
+    blit_smooth: bool,
 }
 
 impl Compositor {
@@ -90,6 +93,7 @@ impl Compositor {
                 u_bezel_gain,
                 u_bezel_alpha,
                 bezel: None,
+                blit_smooth: false,
             })
         }
     }
@@ -275,6 +279,7 @@ impl Compositor {
             gl::ActiveTexture(gl::TEXTURE0);
             gl::Uniform3f(self.u_gain, self.gain[0], self.gain[1], self.gain[2]);
         }
+        self.set_blit_filter(w.max(0) as u32, h.max(0) as u32);
         unsafe { gl::BindTexture(gl::TEXTURE_2D, self.tex) };
         let cut = self
             .split
@@ -320,6 +325,22 @@ impl Compositor {
 }
 
 impl Compositor {
+    fn set_blit_filter(&mut self, w: u32, h: u32) {
+        let minify = w < self.size.0 || h < self.size.1;
+        if minify == self.blit_smooth {
+            return;
+        }
+        unsafe {
+            gl::BindTexture(gl::TEXTURE_2D, self.tex);
+            gl::TexParameteri(
+                gl::TEXTURE_2D,
+                gl::TEXTURE_MIN_FILTER,
+                if minify { gl::LINEAR } else { gl::NEAREST } as i32,
+            );
+        }
+        self.blit_smooth = minify;
+    }
+
     fn blit_part(&self, x: i32, y: i32, w: i32, h: i32, uv: [f32; 4]) {
         unsafe {
             gl::Viewport(x, y, w, h);

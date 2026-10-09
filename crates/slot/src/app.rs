@@ -1397,6 +1397,7 @@ impl App {
             Shader::Grid => Toast::ShaderGrid,
             Shader::Dot => Toast::ShaderDot,
             Shader::Simpletex => Toast::ShaderSimpletex,
+            Shader::Sharp => Toast::ShaderSharp,
         };
         self.persist();
         self.hud.toast(said, self.now());
@@ -3318,6 +3319,7 @@ fn shader_value(shader: Shader) -> QuickValue {
         Shader::Grid => QuickValue::Grid,
         Shader::Dot => QuickValue::Dot,
         Shader::Simpletex => QuickValue::Simpletex,
+        Shader::Sharp => QuickValue::Sharp,
     }
 }
 

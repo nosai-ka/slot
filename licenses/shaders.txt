@@ -14,4 +14,12 @@ GNU General Public License version 2 or later.
 The paper texture (assets/paper.png, a 1024x1024 crop of textured_paper.png) is from the same shader.
 Changes: the grid bias is 1.0, so black pixels carry no grid.
 
+Sharp is a port of sharp-shimmerless by zadpos.
+https://github.com/Woohyun-Kang/Sharp-Shimmerless-Shader
+CC0 1.0 Universal.
+Changes: the box average is taken by blending four nearest samples in the shader rather
+than by switching the game texture to bilinear filtering, so the other effects keep
+nearest pixels; it follows the picture's source rect instead of the whole texture, and
+it stays inside the picture at the edges.
+
 slot itself is GNU General Public License version 3 or later, which these licenses permit.
